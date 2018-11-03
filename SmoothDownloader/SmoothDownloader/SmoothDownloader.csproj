@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6AA44AA2-3D12-4691-964C-012F3A0C7F8C}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SmoothDownloader</RootNamespace>
+    <AssemblyName>SmoothDownloader</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>SmoothDownloader.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Mkv\ParsedMuxState.cs" />
+    <Compile Include="Mp4\SampleDependencyTypeBox.Element.cs" />
+    <Compile Include="Mp4\TfrfBox.Element.cs" />
+    <Compile Include="Mp4\TrackRunBox.Element.cs" />
+    <Compile Include="MuxingInteractiveState.cs" />
+    <Compile Include="Smooth\AudioTrackInfo.WaveFormatEx.cs" />
+    <Compile Include="Smooth\IUrlProcessor.cs" />
+    <Compile Include="Mkv\MkvTrackType.cs" />
+    <Compile Include="Mkv\MkvCodec.cs" />
+    <Compile Include="Mkv\CuePoint.cs" />
+    <Compile Include="Download\Downloader.cs" />
+    <Compile Include="Download\DownloadingMediaDataSource.cs" />
+    <Compile Include="Download\Fragment.cs" />
+    <Compile Include="Mkv\IChunkStartTimeReceiver.cs" />
+    <Compile Include="Mkv\MkvIdentifier.cs" />
+    <Compile Include="Mkv\LanguageId.cs" />
+    <Compile Include="Mkv\IMediaDataSource.cs" />
+    <Compile Include="Download\IStoppable.cs" />
+    <Compile Include="Mkv\MediaDataBlock.cs" />
+    <Compile Include="Download\MediaSample.cs" />
+    <Compile Include="Mkv\MkvUtils.cs" />
+    <Compile Include="Mp4\Box.cs" />
+    <Compile Include="Mp4\Mp4Identifier.cs" />
+    <Compile Include="Mp4\MediaDataBox.cs" />
+    <Compile Include="Mp4\MovieFragmentBox.cs" />
+    <Compile Include="Mkv\MuxStateWriter.cs" />
+    <Compile Include="Mp4\MovieFragmentHeaderBox.cs" />
+    <Compile Include="Mp4\Mp4Utils.cs" />
+    <Compile Include="Mp4\SampleDependencyTypeBox.cs" />
+    <Compile Include="Mp4\TfrfBox.cs" />
+    <Compile Include="Mp4\TfxdBox.cs" />
+    <Compile Include="Mp4\TrackFragmentBox.cs" />
+    <Compile Include="Mp4\TrackFragmentHeaderBox.cs" />
+    <Compile Include="Mp4\TrackRunBox.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Smooth\AudioTrackInfo.cs" />
+    <Compile Include="Smooth\ChunkInfo.cs" />
+    <Compile Include="Smooth\ManifestInfo.cs" />
+    <Compile Include="Smooth\Parser.cs" />
+    <Compile Include="Smooth\MediaStreamType.cs" />
+    <Compile Include="Download\Track.cs" />
+    <Compile Include="Mkv\TrackEntry.cs" />
+    <Compile Include="Smooth\StreamInfo.cs" />
+    <Compile Include="Smooth\TrackInfo.cs" />
+    <Compile Include="Smooth\VideoTrackInfo.cs" />
+    <Compile Include="Smooth\Utils.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
