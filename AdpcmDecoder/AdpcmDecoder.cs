@@ -5,7 +5,7 @@ namespace AdpcmDecoder
 {
     /// <summary>
     /// </summary>
-    public sealed class AdpcmDecoder
+    internal class AdpcmDecoder
     {
         /// <summary>
         /// </summary>
@@ -53,7 +53,7 @@ namespace AdpcmDecoder
 
         /// <summary>
         /// </summary>
-        private int _adpcmD;
+        private int _adpcmDelta;
 
         /// <summary>
         /// </summary>
@@ -65,7 +65,7 @@ namespace AdpcmDecoder
 
         /// <summary>
         /// </summary>
-        private int _bufferPtr;
+        private int _bufferPosition;
 
         /// <inheritdoc />
         /// <summary>
@@ -123,16 +123,16 @@ namespace AdpcmDecoder
         /// <returns></returns>
         private short[] Convert(IReadOnlyCollection<byte> adpcmData, Func<byte, short> adpcmHandler)
         {
-            _adpcmD = 0x7F;
             _decrement = 0;
-            _bufferPtr = 0;
             _accumulator = 0;
+            _adpcmDelta = 0x7F;
+            _bufferPosition = 0;
             _buffer = new short[adpcmData.Count << 1];
 
-            foreach (var value in adpcmData)
+            foreach (var nibble in adpcmData)
             {
-                _buffer[_bufferPtr++] = adpcmHandler((byte)((value & 0xF0) >> 4));
-                _buffer[_bufferPtr++] = adpcmHandler((byte)(value & 0x0F));
+                _buffer[_bufferPosition++] = adpcmHandler((byte)((nibble & 0xF0) >> 4));
+                _buffer[_bufferPosition++] = adpcmHandler((byte)(nibble & 0x0F));
             }
 
             return _buffer;
@@ -140,11 +140,11 @@ namespace AdpcmDecoder
 
         /// <summary>
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="nibble"></param>
         /// <returns></returns>
-        private short DecodeApdcmTypeA(byte value)
+        private short DecodeApdcmTypeA(byte nibble)
         {
-            _accumulator += _jediTable[_decrement + value];
+            _accumulator += _jediTable[_decrement + nibble];
 
             if ((_accumulator & -2048) == 0)
             {
@@ -155,7 +155,7 @@ namespace AdpcmDecoder
                 _accumulator |= -4096;
             }
 
-            _decrement += StepAdjustment[value & 0x07] << 4;
+            _decrement += StepAdjustment[nibble & 0x07] << 4;
 
             if (_decrement < 0x0000)
             {
@@ -172,11 +172,11 @@ namespace AdpcmDecoder
 
         /// <summary>
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="nibble"></param>
         /// <returns></returns>
-        private short DecodeApdcmTypeB(byte value)
+        private short DecodeApdcmTypeB(byte nibble)
         {
-            _accumulator += AdpcmDecodeTableB1[value] * (_adpcmD >> 3);
+            _accumulator += AdpcmDecodeTableB1[nibble] * (_adpcmDelta >> 3);
 
             if (_accumulator > 0x7FFF)
             {
@@ -187,15 +187,15 @@ namespace AdpcmDecoder
                 _accumulator = -32768;
             }
 
-            _adpcmD = _adpcmD * AdpcmDecodeTableB2[value] / 64;
+            _adpcmDelta = _adpcmDelta * AdpcmDecodeTableB2[nibble] / 64;
 
-            if (_adpcmD > 0x6000)
+            if (_adpcmDelta > 0x6000)
             {
-                _adpcmD = 0x6000;
+                _adpcmDelta = 0x6000;
             }
-            else if (_adpcmD < 0x7F)
+            else if (_adpcmDelta < 0x007F)
             {
-                _adpcmD = 0x7F;
+                _adpcmDelta = 0x007F;
             }
 
             return (short)_accumulator;
