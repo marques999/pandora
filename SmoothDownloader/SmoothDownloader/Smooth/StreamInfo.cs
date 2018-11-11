@@ -235,11 +235,7 @@ namespace SmoothDownloader.Smooth
         /// <returns></returns>
         public string GetChunkUrl(uint bitrate, ulong startTime)
         {
-            return _pureUrl + "/" + Parser.StringAttribute(Attributes, "Url")
-                       .Replace("{bitrate}", bitrate.ToString())
-                       .Replace("{Bitrate}", bitrate.ToString())
-                       .Replace("{start time}", startTime.ToString())
-                       .Replace("{start_time}", startTime.ToString());
+            return _pureUrl + "/" + Parser.StringAttribute(Attributes, "Url").Replace("{bitrate}", bitrate.ToString()).Replace("{Bitrate}", bitrate.ToString()).Replace("{start time}", startTime.ToString()).Replace("{start_time}", startTime.ToString());
         }
     }
 }

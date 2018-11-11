@@ -123,41 +123,45 @@ namespace SmoothDownloader
         private static void RecordAndMux(string ismFileName, string outputDirectory, bool isDeterministic)
         {
             var mkvPath = outputDirectory + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(ismFileName) + ".mkv";
-            var muxPath = Path.ChangeExtension(mkvPath, "muxstate");
 
-            if (File.Exists(mkvPath) && !File.Exists(muxPath))
+            if (File.Exists(mkvPath) && File.Exists(Path.ChangeExtension(mkvPath, "muxstate")) == false)
             {
-                Console.WriteLine("Already downloaded MKV: " + mkvPath + Environment.NewLine);
-                return;
-            }
-
-            Console.WriteLine("Will mux to MKV: " + mkvPath);
-            var manifestUrl = ismFileName + "/manifest";
-            Uri manifestUri = null;
-            string manifestPath = null;
-
-            if (manifestUrl.StartsWith("http://") || manifestUrl.StartsWith("https://"))
-            {
-                manifestUri = new Uri(manifestUrl);
-            }
-            else if (manifestUrl.StartsWith("file://"))
-            {
-                manifestPath = new Uri(manifestUrl).LocalPath;
+                Console.WriteLine($"Already downloaded: {mkvPath}{Environment.NewLine}");
             }
             else
             {
-                manifestPath = manifestUrl;
+                Console.WriteLine("Muxing MKV: " + mkvPath);
+
+                Uri manifestUri = null;
+                string manifestPath = null;
+                var manifestUrl = ismFileName + "/manifest";
+
+                if (manifestUrl.StartsWith("http://") || manifestUrl.StartsWith("https://"))
+                {
+                    manifestUri = new Uri(manifestUrl);
+                }
+                else if (manifestUrl.StartsWith("file://"))
+                {
+                    manifestPath = new Uri(manifestUrl).LocalPath;
+                }
+                else
+                {
+                    manifestPath = manifestUrl;
+                }
+
+                var muxingInteractiveState = new MuxingInteractiveState();
+
+                Downloader.DownloadAndMux(
+                    manifestUri,
+                    manifestPath,
+                    mkvPath,
+                    isDeterministic,
+                    new TimeSpan(10, 0, 0),
+                    muxingInteractiveState.SetupStop,
+                    muxingInteractiveState.DisplayDuration);
+
+                muxingInteractiveState.Abort();
             }
-
-            var muxingInteractiveState = new MuxingInteractiveState();
-
-            Downloader.DownloadAndMux(manifestUri, manifestPath, mkvPath, isDeterministic,
-                new TimeSpan(10, 0, 0),
-                muxingInteractiveState.SetupStop,
-                muxingInteractiveState.DisplayDuration
-            );
-
-            muxingInteractiveState.Abort();
         }
     }
 }

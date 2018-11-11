@@ -56,7 +56,7 @@ namespace CriPakTools
                 Encrypted = IsUtfEncrypted,
                 FileSize = CpkPacket.Length,
                 FileOffsetPosition = reader.BaseStream.Position + 0x10
-            };  
+            };
 
             FileTable = new List<FileEntry>
             {

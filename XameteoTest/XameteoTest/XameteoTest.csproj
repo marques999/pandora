@@ -1,74 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0BF061F4-7DE4-42A5-B26A-9EE14DA429F2}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>XameteoTest</RootNamespace>
-    <AssemblyName>XameteoTest</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <StartupObject>XameteoTest.Program</StartupObject>
   </PropertyGroup>
-  <PropertyGroup>
-    <NoWin32Manifest>true</NoWin32Manifest>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Net.Http" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="API\Apixu.cs" />
-    <Compile Include="API\ApixuByAirport.cs" />
-    <Compile Include="API\ApixuByCoordinates.cs" />
-    <Compile Include="API\ApixuByCity.cs" />
-    <Compile Include="API\ApixuByLocation.cs" />
-    <Compile Include="Model\ApixuHistory.cs" />
-    <Compile Include="Model\Astrology.cs" />
-    <Compile Include="Model\Condition.cs" />
-    <Compile Include="Model\Current.cs" />
-    <Compile Include="Model\Day.cs" />
-    <Compile Include="Model\Forecast.cs" />
-    <Compile Include="Model\ForecastDaily.cs" />
-    <Compile Include="Model\Hourly.cs" />
-    <Compile Include="Model\Location.cs" />
-    <Compile Include="Model\ApixuCurrent.cs" />
-    <Compile Include="Model\ApixuForecast.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="IPMA\IpmaDistrict.cs" />
-    <Compile Include="IPMA\IpmaForecast.cs" />
-    <Compile Include="LinqExtensions.cs" />
-    <Compile Include="IPMA\IpmaLocation.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -62,7 +62,7 @@ namespace SmoothDownloader.Smooth
             }
 
             Uri = uri;
-            TimeScale = 10000000uL;
+            TimeScale = 10000000;
             Attributes = Parser.Attributes(element);
             Duration = Parser.UInt64Attribute(Attributes, "Duration");
             MajorVersion = Parser.UInt32Attribute(Attributes, "MajorVersion");
@@ -150,8 +150,7 @@ namespace SmoothDownloader.Smooth
 
                 switch (AvailableStreams[position].Type)
                 {
-                case MediaStreamType.Audio:
-                case MediaStreamType.Video:
+                case MediaStreamType.Audio: case MediaStreamType.Video:
 
                     foreach (var trackInfo in AvailableStreams[position].AvailableTracks)
                     {

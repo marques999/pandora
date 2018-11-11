@@ -48,30 +48,33 @@ namespace XameteoTest.API
         /// <returns></returns>
         private static async Task<T> HttpGetAsync<T>(string uri)
         {
-            var request = WebRequest.Create(uri) as HttpWebRequest;
-
-            request.Method = "GET";
-            request.ContentType = "application/json";
-
-            using (var response = await request.GetResponseAsync())
+            if (WebRequest.Create(uri) is HttpWebRequest request)
             {
-                if (!(response is HttpWebResponse httpResponse))
-                {
-                    return default(T);
-                }
+                request.Method = "GET";
+                request.ContentType = "application/json";
 
-                var statusCode = httpResponse.StatusCode;
-
-                if (statusCode != HttpStatusCode.OK)
+                using (var response = await request.GetResponseAsync())
                 {
-                    return default(T);
-                }
+                    if (!(response is HttpWebResponse httpResponse))
+                    {
+                        return default(T);
+                    }
 
-                using (var reader = new StreamReader(response.GetResponseStream()))
-                {
-                    return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
+                    var statusCode = httpResponse.StatusCode;
+
+                    if (statusCode != HttpStatusCode.OK)
+                    {
+                        return default(T);
+                    }
+
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
+                    }
                 }
             }
+
+            return default(T);
         }
     }
 }
