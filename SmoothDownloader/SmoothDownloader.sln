@@ -1,7 +1,8 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothDownloader", "SmoothDownloader\SmoothDownloader.csproj", "{0C9BD944-E73A-4944-9222-766980921948}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothDownloader", "SmoothDownloader.csproj", "{0C9BD944-E73A-4944-9222-766980921948}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
