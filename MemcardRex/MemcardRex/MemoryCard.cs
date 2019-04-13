@@ -6,74 +6,135 @@ using System.Text;
 
 namespace MemcardRex
 {
-    class MemoryCard
+    /// <summary>
+    /// </summary>
+    internal class MemoryCard
     {
+        /// <summary>
+        /// </summary>
         private const int MemoryCardSlots = 15;
+
+        /// <summary>
+        /// </summary>
         private const int MemoryCardRawLength = 131072;
+
+        /// <summary>
+        /// </summary>
         private const int GmeHeaderLength = 3904;
+
+        /// <summary>
+        /// </summary>
         private const int SlotHeaderLength = 128;
+
+        /// <summary>
+        /// </summary>
         private const int SlotRawLength = 8192;
+
+        /// <summary>
+        /// </summary>
         private const int IconRawLength = 416;
+
+        /// <summary>
+        /// </summary>
         private const int IconDimensions = 16;
+
+        /// <summary>
+        /// </summary>
         private const int IconPaletteLength = 16;
+
+        /// <summary>
+        /// </summary>
         private const int GmeCommentsLength = 256;
 
-        //Memory Card's name
-        public string CardName;
+        /// <summary>
+        /// </summary>
+        private readonly ShiftJisConverter _sjisc = new ShiftJisConverter();
 
-        //Memory Card's location (path + filename)
+        /// <summary>
+        /// </summary>
+        private byte[] _rawMemoryCard = new byte[MemoryCardRawLength];
+
+        /// <summary>
+        /// </summary>
         public string CardLocation;
 
+        /// <summary>
+        /// </summary>
+        public string CardName;
+
+        /// <summary>
+        /// </summary>
         public byte CardType;
 
-        public bool WasChanged;
-
-        byte[] _rawMemoryCard = new byte[MemoryCardRawLength];
-
+        /// <summary>
+        /// </summary>
         public byte[] GmeHeader = new byte[GmeHeaderLength];
 
+        /// <summary>
+        /// </summary>
         public byte[,] HeaderData = new byte[MemoryCardSlots, SlotHeaderLength];
 
-        public byte[,] SaveData = new byte[MemoryCardSlots, SlotRawLength];
-
-        public Color[,] IconPalette = new Color[MemoryCardSlots, IconPaletteLength];
-
+        /// <summary>
+        /// </summary>
         public Bitmap[,] IconData = new Bitmap[MemoryCardSlots, 3];
 
-        //Number of icon frames
+        /// <summary>
+        /// </summary>
         public int[] IconFrames = new int[MemoryCardSlots];
 
-        public string[] SaveProdCode = new string[MemoryCardSlots];
+        /// <summary>
+        /// </summary>
+        public Color[,] IconPalette = new Color[MemoryCardSlots, IconPaletteLength];
 
-        public string[] SaveIdentifier = new string[MemoryCardSlots];
-
-        //Region of the save (16 bit value, ASCII representation: BA - America, BE - Europe, BI - Japan)
-        public ushort[] SaveRegion = new ushort[MemoryCardSlots];
-
-        public int[] SaveSize = new int[MemoryCardSlots];
-
-        public string[,] SaveName = new string[MemoryCardSlots, 2];
-
+        /// <summary>
+        /// </summary>
         public string[] SaveComments = new string[MemoryCardSlots];
 
-        //Type of the save (0 - formatted, 1 - initial, 2 - middle link, 3 - end link, 4 - deleted initial, 5 - deleted middle link, 6 - deleted end link, 7 - corrupted)
+        /// <summary>
+        /// </summary>
+        public byte[,] SaveData = new byte[MemoryCardSlots, SlotRawLength];
+
+        /// <summary>
+        /// </summary>
+        public string[] SaveIdentifier = new string[MemoryCardSlots];
+
+        /// <summary>
+        /// </summary>
+        public string[,] SaveName = new string[MemoryCardSlots, 2];
+
+        /// <summary>
+        /// </summary>
+        public string[] SaveProdCode = new string[MemoryCardSlots];
+
+        /// <summary>
+        /// </summary>
+        public ushort[] SaveRegion = new ushort[MemoryCardSlots];
+
+        /// <summary>
+        /// </summary>
+        public int[] SaveSize = new int[MemoryCardSlots];
+
+        /// <summary>
+        /// </summary>
         public byte[] SaveType = new byte[MemoryCardSlots];
 
-        readonly ShiftJisConverter _sjisc = new ShiftJisConverter();
+        /// <summary>
+        /// </summary>
+        public bool WasChanged;
 
+        /// <summary>
+        /// </summary>
         private void LoadDataFromRawCard()
         {
             for (var slotNumber = 0; slotNumber < MemoryCardSlots; slotNumber++)
             {
                 for (var currentByte = 0; currentByte < SlotHeaderLength; currentByte++)
-                {
-                    HeaderData[slotNumber, currentByte] = _rawMemoryCard[SlotHeaderLength + slotNumber * SlotHeaderLength + currentByte];
-                }
+                    HeaderData[slotNumber, currentByte] =
+                        _rawMemoryCard[SlotHeaderLength + slotNumber * SlotHeaderLength + currentByte];
 
                 for (var currentByte = 0; currentByte < SlotRawLength; currentByte++)
-                {
-                    SaveData[slotNumber, currentByte] = _rawMemoryCard[SlotRawLength + slotNumber * SlotRawLength + currentByte];
-                }
+                    SaveData[slotNumber, currentByte] =
+                        _rawMemoryCard[SlotRawLength + slotNumber * SlotRawLength + currentByte];
             }
         }
 
@@ -235,12 +296,12 @@ namespace MemcardRex
                     byteArray[byteIndex] = SaveData[slotIndex, byteIndex + 4];
                 }
 
-                SaveName[slotIndex, 0x00] = _sjisc.ConvertSjisToAscii(byteArray);
-                SaveName[slotIndex, 0x01] = Encoding.GetEncoding(932).GetString(byteArray);
+                SaveName[slotIndex, 0] = _sjisc.ConvertShiftJisToAscii(byteArray);
+                SaveName[slotIndex, 1] = Encoding.GetEncoding(932).GetString(byteArray);
 
-                if (SaveName[slotIndex, 0x00] == null)
+                if (SaveName[slotIndex, 0] == null)
                 {
-                    SaveName[slotIndex, 0x00] = Encoding.Default.GetString(byteArray, 0, 32);
+                    SaveName[slotIndex, 0] = Encoding.Default.GetString(byteArray, 0, 32);
                 }
             }
         }
@@ -250,15 +311,13 @@ namespace MemcardRex
             SaveSize = new int[MemoryCardSlots];
 
             for (var slotIndex = 0; slotIndex < MemoryCardSlots; slotIndex++)
-            {
-                SaveSize[slotIndex] = (HeaderData[slotIndex, 4] | (HeaderData[slotIndex, 5] << 8) | (HeaderData[slotIndex, 6] << 16)) / 1024;
-            }
+                SaveSize[slotIndex] = (HeaderData[slotIndex, 4] | (HeaderData[slotIndex, 5] << 8) |
+                                       (HeaderData[slotIndex, 6] << 16)) / 1024;
         }
 
         public void ToggleDeleteSave(int slotIndex)
         {
             foreach (var slot in FindSaveLinks(slotIndex))
-            {
                 switch (SaveType[slot])
                 {
                 case 1:
@@ -280,7 +339,6 @@ namespace MemcardRex
                     HeaderData[slot, 0x00] = 0x53;
                     break;
                 }
-            }
 
             CalculateXor();
             LoadSlotTypes();
@@ -289,10 +347,7 @@ namespace MemcardRex
 
         public void FormatSave(int slotIndex)
         {
-            foreach (var slot in FindSaveLinks(slotIndex))
-            {
-                FormatSlot(slot);
-            }
+            foreach (var slot in FindSaveLinks(slotIndex)) FormatSlot(slot);
 
             CalculateXor();
             LoadStringData();
@@ -314,15 +369,9 @@ namespace MemcardRex
             {
                 slotList.Add(slotIndex);
 
-                if (slotIndex > MemoryCardSlots || SaveType[slotIndex] == 7)
-                {
-                    break;
-                }
+                if (slotIndex > MemoryCardSlots || SaveType[slotIndex] == 7) break;
 
-                if (HeaderData[slotIndex, 8] == 0xFF)
-                {
-                    break;
-                }
+                if (HeaderData[slotIndex, 8] == 0xFF) break;
 
                 slotIndex = HeaderData[slotIndex, 8];
             }
@@ -374,12 +423,9 @@ namespace MemcardRex
             }
 
             for (var slotIndex = 0; slotIndex < slots.Length; slotIndex++)
-            {
                 for (var byteIndex = 0; byteIndex < SlotRawLength; byteIndex++)
-                {
-                    saveBytes[SlotHeaderLength + slotIndex * SlotRawLength + byteIndex] = SaveData[slots[slotIndex], byteIndex];
-                }
-            }
+                    saveBytes[SlotHeaderLength + slotIndex * SlotRawLength + byteIndex] =
+                        SaveData[slots[slotIndex], byteIndex];
 
             return saveBytes;
         }
@@ -413,12 +459,9 @@ namespace MemcardRex
             HeaderData[freeSlots[0], 6] = (byte)((numberOfBytes & 0xFF0000) >> 16);
 
             for (var slotIndex = 0; slotIndex < numberOfSlots; slotIndex++)
-            {
                 for (var byteCount = 0; byteCount < SlotRawLength; byteCount++)
-                {
-                    SaveData[freeSlots[slotIndex], byteCount] = saveBytes[SlotHeaderLength + slotIndex * SlotRawLength + byteCount];
-                }
-            }
+                    SaveData[freeSlots[slotIndex], byteCount] =
+                        saveBytes[SlotHeaderLength + slotIndex * SlotRawLength + byteCount];
 
             for (var slotIndex = 0; slotIndex < freeSlots.Length - 1; slotIndex++)
             {
@@ -491,7 +534,7 @@ namespace MemcardRex
                     var greenChannel = ((SaveData[slotIndex, byteIndex + 97] & 0x03) << 6) | ((SaveData[slotIndex, byteIndex + 96] & 0xE0) >> 2);
                     var blueChannel = (SaveData[slotIndex, byteIndex + 97] & 0x7C) << 1;
 
-                    if ((redChannel | greenChannel | blueChannel | SaveData[slotIndex, byteIndex + 97] & 0x80) == 0)
+                    if ((redChannel | greenChannel | blueChannel | (SaveData[slotIndex, byteIndex + 97] & 0x80)) == 0)
                     {
                         IconPalette[slotIndex, colorIndex] = Color.Transparent;
                     }
@@ -521,8 +564,10 @@ namespace MemcardRex
                     {
                         for (var xPixel = 0; xPixel < IconDimensions; xPixel += 2)
                         {
-                            IconData[slotIndex, iconIndex].SetPixel(xPixel, yPixel, IconPalette[slotIndex, SaveData[slotIndex, byteIndex] & 0xF]);
-                            IconData[slotIndex, iconIndex].SetPixel(xPixel + 1, yPixel, IconPalette[slotIndex, SaveData[slotIndex, byteIndex] >> 4]);
+                            IconData[slotIndex, iconIndex].SetPixel(xPixel, yPixel,
+                                IconPalette[slotIndex, SaveData[slotIndex, byteIndex] & 0xF]);
+                            IconData[slotIndex, iconIndex].SetPixel(xPixel + 1, yPixel,
+                                IconPalette[slotIndex, SaveData[slotIndex, byteIndex] >> 4]);
                             byteIndex++;
                         }
                     }
@@ -534,7 +579,7 @@ namespace MemcardRex
         {
             var iconBytes = new byte[IconRawLength];
 
-            for (var byteIndex = 0; byteIndex < IconRawLength; byteIndex++)
+            for (var byteIndex = 0; byteIndex < iconBytes.Length; byteIndex++)
             {
                 iconBytes[byteIndex] = SaveData[slotNumber, byteIndex + 96];
             }
@@ -558,7 +603,7 @@ namespace MemcardRex
         {
             IconFrames = new int[MemoryCardSlots];
 
-            for (var slotIndex = 0; slotIndex < MemoryCardSlots; slotIndex++)
+            for (var slotIndex = 0; slotIndex < IconFrames.Length; slotIndex++)
             {
                 switch (SaveData[slotIndex, 2])
                 {
@@ -579,7 +624,7 @@ namespace MemcardRex
         {
             SaveComments = new string[MemoryCardSlots];
 
-            for (var slotIndex = 0; slotIndex < MemoryCardSlots; slotIndex++)
+            for (var slotIndex = 0; slotIndex < SaveComments.Length; slotIndex++)
             {
                 var byteArray = new byte[GmeCommentsLength];
 
@@ -627,10 +672,7 @@ namespace MemcardRex
 
         private void FormatMemoryCard()
         {
-            for (var slotNumber = 0; slotNumber < MemoryCardSlots; slotNumber++)
-            {
-                FormatSlot(slotNumber);
-            }
+            for (var slotNumber = 0; slotNumber < MemoryCardSlots; slotNumber++) FormatSlot(slotNumber);
 
             CalculateXor();
             LoadStringData();
@@ -671,16 +713,12 @@ namespace MemcardRex
                 var headerBytes = new byte[54];
 
                 for (var byteIndex = 0; byteIndex < 22; byteIndex++)
-                {
                     headerBytes[byteIndex] = HeaderData[slotNumber, byteIndex + 10];
-                }
 
                 var nameBytes = Encoding.Default.GetBytes(SaveName[slotNumber, 0]);
 
                 for (var byteIndex = 0; byteIndex < nameBytes.Length; byteIndex++)
-                {
                     headerBytes[byteIndex + 21] = nameBytes[byteIndex];
-                }
 
                 binaryWriter.Write(headerBytes);
                 binaryWriter.Write(saveBytes, SlotHeaderLength, saveBytes.Length - SlotHeaderLength);
@@ -700,7 +738,8 @@ namespace MemcardRex
 
             try
             {
-                binaryReader = new BinaryReader(File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                binaryReader =
+                    new BinaryReader(File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
             }
             catch (Exception)
             {
@@ -725,17 +764,20 @@ namespace MemcardRex
             else if (tempString == "SC")
             {
                 finalData = new byte[inputData.Length + SlotHeaderLength];
+
                 var singleSaveHeader = Encoding.Default.GetBytes(Path.GetFileName(fileName));
 
-                //Recreate save header
-                finalData[0] = 0x51; //Q
+                finalData[0] = 0x51;
 
                 for (var i = 0; i < 20 && i < singleSaveHeader.Length; i++)
+                {
                     finalData[i + 10] = singleSaveHeader[i];
+                }
 
-                //Copy save data
                 for (var i = 0; i < inputData.Length; i++)
+                {
                     finalData[i + SlotHeaderLength] = inputData[i];
+                }
             }
             else if (tempString == "V")
             {
@@ -747,31 +789,26 @@ namespace MemcardRex
                 finalData = new byte[inputData.Length - 4];
                 finalData[0] = 0x51;
 
-                for (var i = 0; i < 20; i++)
-                {
-                    finalData[i + 10] = inputData[i + 100];
-                }
+                for (var i = 0; i < 20; i++) finalData[i + 10] = inputData[i + 100];
 
-                for (var i = 0; i < inputData.Length - 132; i++)
-                {
-                    finalData[i + SlotHeaderLength] = inputData[i + 132];
-                }
+                for (var i = 0; i < inputData.Length - 132; i++) finalData[i + SlotHeaderLength] = inputData[i + 132];
             }
             else
             {
                 if (!(inputData[0x36] == 0x53 && inputData[0x37] == 0x43)) return false;
 
                 finalData = new byte[inputData.Length + 74];
-
-                //Recreate save header
                 finalData[0] = 0x51; //Q
 
-                for (var i = 0; i < 20; i++)
-                    finalData[i + 10] = inputData[i];
+                for (var byteIndex = 0; byteIndex < 20; byteIndex++)
+                {
+                    finalData[byteIndex + 10] = inputData[byteIndex];
+                }
 
-                //Copy save data
-                for (var i = 0; i < inputData.Length - 54; i++)
-                    finalData[i + SlotHeaderLength] = inputData[i + 54];
+                for (var byteIndex = 0; byteIndex < inputData.Length - 54; byteIndex++)
+                {
+                    finalData[byteIndex + SlotHeaderLength] = inputData[byteIndex + 54];
+                }
             }
 
             return SetSaveBytes(slotNumber, finalData, out requiredSlots);
@@ -783,7 +820,8 @@ namespace MemcardRex
 
             try
             {
-                binaryWriter = new BinaryWriter(File.Open(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None));
+                binaryWriter =
+                    new BinaryWriter(File.Open(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None));
             }
             catch
             {
@@ -853,7 +891,8 @@ namespace MemcardRex
 
                 try
                 {
-                    binaryReader = new BinaryReader(File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                    binaryReader =
+                        new BinaryReader(File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
                 }
                 catch (Exception exception)
                 {
@@ -867,7 +906,8 @@ namespace MemcardRex
                 CardLocation = fileName;
                 CardName = Path.GetFileNameWithoutExtension(fileName);
 
-                var tempString = Encoding.ASCII.GetString(sourceArray, 0, 11).Trim((char)0x00, (char)0x01, (char)0x3F);
+                var tempString = Encoding.ASCII.GetString(sourceArray, 0, 11)
+                    .Trim((char)0x00, (char)0x01, (char)0x3F);
 
                 switch (tempString)
                 {

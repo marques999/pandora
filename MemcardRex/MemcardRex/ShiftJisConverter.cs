@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace MemcardRex
 {
@@ -8,7 +9,7 @@ namespace MemcardRex
     {
         /// <summary>
         /// </summary>
-        private static readonly Dictionary<int, char> SjisTable = new Dictionary<int, char>
+        private static readonly Dictionary<int, char> ShiftJisTable = new Dictionary<int, char>
         {
             [0x8143] = ',',
             [0x8144] = '.',
@@ -116,30 +117,39 @@ namespace MemcardRex
 
         /// <summary>
         /// </summary>
-        public string ConvertSjisToAscii(byte[] bData)
+        public string ConvertShiftJisToAscii(byte[] buffer)
         {
-            string output = null;
+            var output = new StringBuilder();
 
-            for (var bCounter = 0; bCounter < bData.Length; bCounter += 2)
+            for (var bufferIndex = 0; bufferIndex < buffer.Length; bufferIndex += 2)
             {
-                var bKey = (bData[bCounter] << 8) | bData[bCounter + 1];
+                var key = (buffer[bufferIndex] << 8) | buffer[bufferIndex + 1];
 
-                if (bKey == 0)
+                switch (key)
                 {
-                    return output;
-                }
+                case 0:
 
-                if (bKey == 0x8140)
-                {
-                    output += "  ";
-                }
-                else if (SjisTable.TryGetValue(bKey, out var bValue))
-                {
-                    output += bValue;
+                    return output.ToString();
+
+                case 0x8140:
+
+                    output.Append("  ");
+
+                    break;
+
+                default:
+
+                    if (ShiftJisTable.TryGetValue(key, out var value))
+                    {
+                        output.Append(value);
+                    }
+
+                    break;
+
                 }
             }
 
-            return output;
+            return output.ToString();
         }
     }
 }
