@@ -421,7 +421,6 @@ namespace CriPakTools
 
             if (Tools.ReadCString(reader, 4) != "ETOC")
             {
-                reader.Close();
                 return false;
             }
 
@@ -433,19 +432,16 @@ namespace CriPakTools
             etocEntry.Encrypted = IsUtfEncrypted;
             etocEntry.FileSize = EtocPacket.Length;
 
-            var stream = new MemoryStream(UtfPacket);
-            var endianReader = new EndianReader(stream, false);
-
-            _files = new Utf();
-
-            if (!_files.ReadUtf(endianReader))
+            using (var stream = new MemoryStream(UtfPacket))
+            using (var endianReader = new EndianReader(stream, false))
             {
-                reader.Close();
-                return false;
-            }
+                _files = new Utf();
 
-            endianReader.Close();
-            stream.Close();
+                if (_files.ReadUtf(endianReader) == false)
+                {
+                    return false;
+                }
+            }
 
             var fileEntries = FileTable.Where(fileEntry => fileEntry.FileType == "FILE").ToList();
 
@@ -463,14 +459,13 @@ namespace CriPakTools
         /// <returns></returns>
         public byte[] DecryptUtf(byte[] input)
         {
-            var m = 0x0000655f;
+            var modulo = 0x0000655f;
             var result = new byte[input.Length];
 
             for (var index = 0; index < input.Length; index++)
             {
-                var d = input[index];
-                result[index] = (byte)(d ^ (byte)(m & 0xFF));
-                m *= 0x00004115;
+                result[index] = (byte)(input[index] ^ (byte)(modulo & 0xFF));
+                modulo *= 0x00004115;
             }
 
             return result;
@@ -494,12 +489,14 @@ namespace CriPakTools
 
             Array.Copy(buffer, uncompressedHeaderOffset + 0x10, result, 0, 0x100);
 
+            var bitsLeft = 0;
+            var bytesOutput = 0;
             var inputEnd = buffer.Length - 0x100 - 1;
             var inputOffset = inputEnd;
             var outputEnd = 0x100 + uncompressedLength - 1;
             byte bitPool = 0;
-            int bitsLeft = 0, bytesOutput = 0;
-            var vleLens = new int[4] { 2, 3, 5, 8 };
+
+            var vleLens = new[] { 2, 3, 5, 8 };
 
             while (bytesOutput < uncompressedLength)
             {

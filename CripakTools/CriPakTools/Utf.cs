@@ -97,7 +97,7 @@ namespace CriPakTools
             {
                 reader.BaseStream.Seek(RowsOffset + rowIndex * RowLength, SeekOrigin.Begin);
 
-                var entry = new List<Row>();
+                var entries = new List<Row>();
 
                 for (var columnIndex = 0; columnIndex < ColumnCount; columnIndex++)
                 {
@@ -106,13 +106,13 @@ namespace CriPakTools
                     switch ((ColumnFlags)Columns[columnIndex].Flags & ColumnFlags.StorageMask)
                     {
                     case ColumnFlags.StorageNone:
-                        entry.Add(row);
+                        entries.Add(row);
                         continue;
                     case ColumnFlags.StorageZero:
-                        entry.Add(row);
+                        entries.Add(row);
                         continue;
                     case ColumnFlags.StorageConstant:
-                        entry.Add(row);
+                        entries.Add(row);
                         continue;
                     }
 
@@ -147,10 +147,10 @@ namespace CriPakTools
                         throw new NotImplementedException();
                     }
 
-                    entry.Add(row);
+                    entries.Add(row);
                 }
 
-                Rows.Add(entry);
+                Rows.Add(entries);
             }
 
             return true;
