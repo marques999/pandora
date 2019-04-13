@@ -1,11 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-
-using AdpcmDecoder.Properties;
 
 namespace AdpcmDecoder
 {
@@ -167,7 +165,6 @@ namespace AdpcmDecoder
             Controls.Add(_buttonDecode);
             Controls.Add(buttonBrowse);
             FormBorderStyle = FormBorderStyle.FixedSingle;
-            Icon = Resources.applicationIcon;
             MaximizeBox = false;
             Name = ApplicationTitle;
             Text = ApplicationTitle;
