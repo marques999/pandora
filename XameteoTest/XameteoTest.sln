@@ -1,7 +1,8 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XameteoTest", "XameteoTest\XameteoTest.csproj", "{2F999529-1DDD-4C9B-87CB-7E5CB6EAEBCA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XameteoTest", "XameteoTest.csproj", "{2F999529-1DDD-4C9B-87CB-7E5CB6EAEBCA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
