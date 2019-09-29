@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace SnakeWinForms
+namespace SnakeCore
 {
     /// <summary>
     /// </summary>
@@ -35,7 +35,7 @@ namespace SnakeWinForms
         /// <summary>
         /// </summary>
         /// <param name="direction"></param>
-        public void Step(DirectionEnum direction)
+        public void Step(Direction direction)
         {
             Position.Step(direction);
             Button.BackColor = SnakeConfig.SnakeNormalColor;

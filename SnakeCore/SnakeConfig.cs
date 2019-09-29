@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace SnakeWinForms
+namespace SnakeCore
 {
     /// <summary>
     /// </summary>
@@ -28,11 +28,7 @@ namespace SnakeWinForms
 
         /// <summary>
         /// </summary>
-        public static readonly Color SnakeHeadColor = Color.ForestGreen;
-
-        /// <summary>
-        /// </summary>
-        public static readonly Color SnakeNormalColor = Color.LawnGreen;
+        public static readonly Color BlankColor = Color.Black;
 
         /// <summary>
         /// </summary>
@@ -40,6 +36,10 @@ namespace SnakeWinForms
 
         /// <summary>
         /// </summary>
-        public static readonly Color BlankColor = Color.Black;
+        public static readonly Color SnakeHeadColor = Color.ForestGreen;
+
+        /// <summary>
+        /// </summary>
+        public static readonly Color SnakeNormalColor = Color.LawnGreen;
     }
 }

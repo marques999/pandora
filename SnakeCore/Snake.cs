@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SnakeWinForms
+namespace SnakeCore
 {
     /// <summary>
     /// </summary>
@@ -10,11 +10,15 @@ namespace SnakeWinForms
     {
         /// <summary>
         /// </summary>
-        private readonly Queue<SnakeSegment> _body = new Queue<SnakeSegment>();
+        private SnakeSegment _segment;
 
         /// <summary>
         /// </summary>
-        private readonly Random _randomGenerator = new Random();
+        private Direction _direction = Direction.Left;
+        
+        /// <summary>
+        /// </summary>
+        public Position2D Position => _segment.Position;
 
         /// <summary>
         /// </summary>
@@ -22,11 +26,11 @@ namespace SnakeWinForms
 
         /// <summary>
         /// </summary>
-        private SnakeSegment _current;
+        private readonly Random _randomGenerator = new Random();
 
         /// <summary>
         /// </summary>
-        private DirectionEnum _direction = DirectionEnum.Left;
+        private readonly Queue<SnakeSegment> _body = new Queue<SnakeSegment>();
 
         /// <summary>
         /// </summary>
@@ -34,13 +38,9 @@ namespace SnakeWinForms
         public Snake(SnakeController snakeController)
         {
             _snakeController = snakeController;
-            _current = new SnakeSegment(_snakeController.CellAt(new Position2D(4, 5)), new Position2D(4, 5));
-            _body.Enqueue(_current);
+            _segment = new SnakeSegment(_snakeController.CellAt(new Position2D(4, 5)), new Position2D(4, 5));
+            _body.Enqueue(_segment);
         }
-
-        /// <summary>
-        /// </summary>
-        public Position2D Position => _current.Position;
 
         /// <summary>
         /// </summary>
@@ -49,13 +49,13 @@ namespace SnakeWinForms
             switch (Position.X)
             {
             case 0:
-                _direction = DirectionEnum.Down;
+                _direction = Direction.Down;
                 break;
             case SnakeConfig.RowCount - 1:
-                _direction = DirectionEnum.Up;
+                _direction = Direction.Up;
                 break;
             default:
-                _direction = _randomGenerator.Next(0, 1) > 0 ? DirectionEnum.Up : DirectionEnum.Down;
+                _direction = _randomGenerator.Next(0, 1) > 0 ? Direction.Up : Direction.Down;
                 break;
             }
         }
@@ -64,16 +64,16 @@ namespace SnakeWinForms
         /// </summary>
         private void CollisionVertical()
         {
-            switch (_current.Position.Y)
+            switch (_segment.Position.Y)
             {
             case 0:
-                _direction = DirectionEnum.Right;
+                _direction = Direction.Right;
                 break;
             case SnakeConfig.ColumnCount - 1:
-                _direction = DirectionEnum.Left;
+                _direction = Direction.Left;
                 break;
             default:
-                _direction = _randomGenerator.Next(0, 1) > 0 ? DirectionEnum.Left : DirectionEnum.Right;
+                _direction = _randomGenerator.Next(0, 1) > 0 ? Direction.Left : Direction.Right;
                 break;
             }
         }
@@ -81,7 +81,7 @@ namespace SnakeWinForms
         /// <summary>
         /// </summary>
         /// <param name="direction"></param>
-        public void Move(DirectionEnum direction)
+        public void Move(Direction direction)
         {
             if (direction != _direction && ((int)direction % 2 == 0 && (int)_direction % 2 != 0) | ((int)direction % 2 != 0 && (int)_direction % 2 == 0))
             {
@@ -91,50 +91,63 @@ namespace SnakeWinForms
 
         /// <summary>
         /// </summary>
-        /// <param name="removeSegment"></param>
+        /// <param name="remove"></param>
         /// <returns></returns>
-        public Position2D Tick(bool removeSegment)
+        public Position2D Tick(bool remove)
         {
-            if (_direction == DirectionEnum.Down)
+            switch (_direction)
             {
+            case Direction.Down:
+
                 if (Position.X == SnakeConfig.RowCount - 1)
                 {
                     CollisionVertical();
                 }
-            }
-            else if (_direction == DirectionEnum.Left)
-            {
+
+                break;
+
+            case Direction.Left:
+
                 if (Position.Y == 0)
                 {
                     CollisionHorizontal();
                 }
-            }
-            else if (_direction == DirectionEnum.Right)
-            {
+
+                break;
+
+            case Direction.Right:
+
                 if (Position.Y == SnakeConfig.ColumnCount - 1)
                 {
                     CollisionHorizontal();
                 }
-            }
-            else if (Position.X == 0)
-            {
-                CollisionVertical();
+
+                break;
+
+            default:
+
+                if (Position.X == 0)
+                {
+                    CollisionVertical();
+                }
+
+                break;
             }
 
-            _current.Step(_direction);
+            _segment.Step(_direction);
 
-            if (_body.GroupBy(x => x.Position).Any(g => g.Count() > 1))
+            if (_body.GroupBy(segment => segment.Position).Any(grouping => grouping.Count() > 1))
             {
                 return null;
             }
 
-            if (removeSegment && _body.Count > 4)
+            if (remove && _body.Count > 4)
             {
                 _body.Dequeue().Reset();
             }
 
-            _current = new SnakeSegment(_snakeController.CellAt(Position), new Position2D(Position));
-            _body.Enqueue(_current);
+            _segment = new SnakeSegment(_snakeController.CellAt(Position), new Position2D(Position));
+            _body.Enqueue(_segment);
 
             return Position;
         }

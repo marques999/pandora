@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace SnakeWinForms
+namespace SnakeCore
 {
     /// <summary>
     /// </summary>
@@ -10,15 +10,7 @@ namespace SnakeWinForms
     {
         /// <summary>
         /// </summary>
-        private readonly List<Button> _matrix = new List<Button>();
-
-        /// <summary>
-        /// </summary>
-        private readonly Random _randomGenerator = new Random();
-
-        /// <summary>
-        /// </summary>
-        private readonly Snake _snake;
+        private int _score;
 
         /// <summary>
         /// </summary>
@@ -26,35 +18,43 @@ namespace SnakeWinForms
 
         /// <summary>
         /// </summary>
+        private readonly Snake _snake;
+
+        /// <summary>
+        /// </summary>
         private Position2D _bonusPosition;
 
         /// <summary>
         /// </summary>
-        private int _score;
+        private readonly Random _randomGenerator = new Random();
+
+        /// <summary>
+        /// </summary>
+        private readonly List<Button> _matrix = new List<Button>();
 
         /// <summary>
         /// </summary>
         public SnakeController(TableLayoutPanel drawingPanel)
         {
-            for (var i = 0; i < SnakeConfig.RowCount; i++)
+            for (var row = 0; row < SnakeConfig.RowCount; row++)
             {
                 drawingPanel.RowStyles.Add(new RowStyle(SizeType.Percent, SnakeConfig.RowPercent));
 
-                for (var j = 0; j < SnakeConfig.ColumnCount; j++)
+                for (var column = 0; column < SnakeConfig.ColumnCount; column++)
                 {
                     drawingPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, SnakeConfig.ColumnPercent));
 
-                    var buttonX = new Button
+                    var button = new Button
                     {
                         Enabled = false,
                         BackColor = SnakeConfig.BlankColor,
                         Dock = DockStyle.Fill,
                         Margin = new Padding(1),
-                        Name = $"button{i + 1}"
+                        Name = $"button{row + 1}"
                     };
 
-                    _matrix.Add(buttonX);
-                    drawingPanel.Controls.Add(buttonX, j, i);
+                    _matrix.Add(button);
+                    drawingPanel.Controls.Add(button, column, row);
                 }
             }
 
@@ -131,16 +131,16 @@ namespace SnakeWinForms
             switch (direction)
             {
             case Keys.Up:
-                _snake.Move(DirectionEnum.Up);
+                _snake.Move(Direction.Up);
                 break;
             case Keys.Down:
-                _snake.Move(DirectionEnum.Down);
+                _snake.Move(Direction.Down);
                 break;
             case Keys.Left:
-                _snake.Move(DirectionEnum.Left);
+                _snake.Move(Direction.Left);
                 break;
             case Keys.Right:
-                _snake.Move(DirectionEnum.Right);
+                _snake.Move(Direction.Right);
                 break;
             }
         }
