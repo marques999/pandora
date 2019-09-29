@@ -9,17 +9,17 @@ namespace XameteoTest
     {
         /// <summary>
         /// </summary>
-        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <param name="comparer"></param>
         /// <returns></returns>
-        public static TSource MinimumBy<TSource>(this IEnumerable<TSource> source, Func<TSource, IComparable> comparer)
+        public static T MinimumBy<T>(this IEnumerable<T> source, Func<T, IComparable> comparer)
         {
             using (var enumerator = source.GetEnumerator())
             {
                 if (enumerator.MoveNext() == false)
                 {
-                    throw new InvalidOperationException();
+                    return default;
                 }
 
                 var minimum = enumerator.Current;

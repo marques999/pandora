@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -32,69 +33,81 @@ namespace XameteoTest
         /// <param name="latitude"></param>
         /// <param name="longitude"></param>
         /// <returns></returns>
-        private static IpmaLocation FindClosest(double latitude, double longitude) => _locations.MinimumBy(location => location.CalculateDistance(latitude, longitude));
+        private static IpmaLocation FindClosest(double latitude, double longitude)
+        {
+            return _locations.MinimumBy(location => location.CalculateDistance(latitude, longitude));
+        }
 
         /// <summary>
         /// </summary>
-        private static void TestGeocoding(string address)
+        private static void TestGeocoding(HttpClient httpClient, string address)
         {
-            new HttpClient().GetAsync(QueryGeocoding(address)).ContinueWith(taskWithResponse =>
+            httpClient.GetAsync(QueryGeocoding(address)).ContinueWith(taskWithResponse =>
             {
-                using (var jsonResponse = taskWithResponse.Result.Content.ReadAsStringAsync())
+                using var jsonData = taskWithResponse.Result.Content.ReadAsStringAsync();
+
+                jsonData.Wait();
+
+                var geocoding = JObject.Parse(jsonData.Result)["results"][0]["geometry"]["location"];
+
+                if (geocoding.HasValues == false)
                 {
-                    jsonResponse.Wait();
-
-                    var geocoding = JObject.Parse(jsonResponse.Result)["results"][0]["geometry"]["location"];
-
-                    if (geocoding.HasValues == false)
-                    {
-                        return;
-                    }
-
-                    var latitude = geocoding["lat"].ToObject<double>();
-                    var longitude = geocoding["lng"].ToObject<double>();
-
-                    TestForecast(FindClosest(latitude, longitude).Id);
-                    Console.WriteLine($"\nUserQuery = {address}");
-                    Console.WriteLine($"\nFindClosest({latitude}, {longitude}) = " + FindClosest(latitude, longitude).Nome);
+                    return;
                 }
+
+                var latitude = geocoding["lat"].ToObject<double>();
+                var longitude = geocoding["lng"].ToObject<double>();
+
+                TestForecast(httpClient, FindClosest(latitude, longitude).Id);
+                Console.WriteLine($"\nUserQuery = {address}");
+                Console.WriteLine($"\nFindClosest({latitude}, {longitude}) = " + FindClosest(latitude, longitude).Nome);
             }).Wait();
         }
 
         /// <summary>
         /// </summary>
-        public static void TestDistricts()
+        public static void TestDistricts(HttpClient httpClient)
         {
-            new HttpClient().GetAsync("http://api.ipma.pt/json/districts.json").ContinueWith(taskWithResponse =>
-            {
-                using (var jsonResponse = taskWithResponse.Result.Content.ReadAsStringAsync())
-                {
-                    jsonResponse.Wait();
+            httpClient.GetAsync("http://api.ipma.pt/json/districts.json").ContinueWith(HandleDistricts).Wait();
+        }
 
-                    foreach (var district in JsonConvert.DeserializeObject<List<IpmaDistrict>>(jsonResponse.Result))
-                    {
-                        Console.WriteLine($@"
+        /// <summary>
+        /// </summary>
+        /// <param name="response"></param>
+        private static void HandleDistricts(Task<HttpResponseMessage> response)
+        {
+            using var jsonData = response.Result.Content.ReadAsStringAsync();
+
+            jsonData.Wait();
+
+            foreach (var district in JsonConvert.DeserializeObject<List<IpmaDistrict>>(jsonData.Result))
+            {
+                Console.WriteLine($@"
 idRegiao: {district.Regiao}
 idDistrito: {district.Id}
 nome: {district.Nome}");
-                    }
-                }
-            }).Wait();
+            }
         }
 
         /// <summary>
         /// </summary>
-        public static void TestForecast(int idLocal)
+        public static void TestForecast(HttpClient httpClient, int idLocal)
         {
-            new HttpClient().GetAsync($"http://api.ipma.pt/json/alldata/{idLocal}.json").ContinueWith(taskWithResponse =>
-            {
-                using (var jsonResponse = taskWithResponse.Result.Content.ReadAsStringAsync())
-                {
-                    jsonResponse.Wait();
+            httpClient.GetAsync($"http://api.ipma.pt/json/alldata/{idLocal}.json").ContinueWith(HandleForecast).Wait();
+        }
 
-                    foreach (var forecast in JsonConvert.DeserializeObject<List<IpmaForecast>>(jsonResponse.Result))
-                    {
-                        Console.WriteLine($@"
+        /// <summary>
+        /// </summary>
+        /// <param name="response"></param>
+        private static void HandleForecast(Task<HttpResponseMessage> response)
+        {
+            using var jsonData = response.Result.Content.ReadAsStringAsync();
+
+            jsonData.Wait();
+
+            foreach (var forecast in JsonConvert.DeserializeObject<List<IpmaForecast>>(jsonData.Result))
+            {
+                Console.WriteLine($@"
 idTipoTempo: {forecast.IdTempo}
 probabilidadePrecipita: {forecast.ProbabilidadePrecipitacao}
 tMax: {forecast.TemperaturaMaxima}
@@ -110,24 +123,28 @@ globalIdLocal: {forecast.IdLocal}
 idPeriodo: {forecast.Periodo}
 dataPrev: {forecast.DataPrevisao}
 idFfxVento: {forecast.IdVento}");
-                    }
-                }
-            }).Wait();
+            }
         }
 
         /// <summary>
         /// </summary>
-        public static void TestLocations()
+        public static void TestLocations(HttpClient httpClient)
         {
-            new HttpClient().GetAsync("http://api.ipma.pt/json/locations.json").ContinueWith(taskWithResponse =>
-            {
-                using (var jsonResponse = taskWithResponse.Result.Content.ReadAsStringAsync())
-                {
-                    jsonResponse.Wait();
+            httpClient.GetAsync("http://api.ipma.pt/json/locations.json").ContinueWith(HandleLocations).Wait();
+        }
 
-                    foreach (var forecast in JsonConvert.DeserializeObject<List<IpmaLocation>>(jsonResponse.Result))
-                    {
-                        Console.WriteLine($@"
+        /// <summary>
+        /// </summary>
+        /// <param name="response"></param>
+        private static void HandleLocations(Task<HttpResponseMessage> response)
+        {
+            using var jsonData = response.Result.Content.ReadAsStringAsync();
+
+            jsonData.Wait();
+
+            foreach (var forecast in JsonConvert.DeserializeObject<List<IpmaLocation>>(jsonData.Result))
+            {
+                Console.WriteLine($@"
 idRegiao: {forecast.Regiao}
 idAreaAviso: {forecast.AreaAviso}
 idConcelho: {forecast.Concelho}
@@ -136,9 +153,7 @@ latitude: {forecast.Latitude}
 idDistrito: {forecast.Distrito}
 local: {forecast.Nome}
 longitude: {forecast.Longitude}");
-                    }
-                }
-            }).Wait();
+            }
         }
 
         /// <summary>
@@ -180,34 +195,39 @@ longitude: {forecast.Longitude}");
 
         /// <summary>
         /// </summary>
+        /// <param name="response"></param>
+        private static void HandleInitial(Task<HttpResponseMessage> response)
+        {
+            using var jsonData = response.Result.Content.ReadAsStringAsync();
+
+            jsonData.Wait();
+            _locations = JsonConvert.DeserializeObject<List<IpmaLocation>>(jsonData.Result);
+        }
+
+        /// <summary>
+        /// </summary>
         private static void Main()
         {
-            new HttpClient().GetAsync("http://api.ipma.pt/json/locations.json").ContinueWith(taskWithResponse =>
-            {
-                using (var jsonResponse = taskWithResponse.Result.Content.ReadAsStringAsync())
-                {
-                    jsonResponse.Wait();
-                    _locations = JsonConvert.DeserializeObject<List<IpmaLocation>>(jsonResponse.Result);
-                }
-            }).Wait();
+            using var httpClient = new HttpClient();
 
-            TestDistricts();
+            httpClient.GetAsync("http://api.ipma.pt/json/locations.json").ContinueWith(HandleInitial).Wait();
+            TestDistricts(httpClient);
             Console.ReadKey(true);
-            TestLocations();
+            TestLocations(httpClient);
             Console.ReadKey(true);
             TestCoordinates();
+            Console.ReadKey(true);
+            TestForecast(httpClient, 1131500);
             Console.ReadKey(true);
             Console.WriteLine("\n+===============================================================+");
             Console.WriteLine("| Begin Geocoding Test                                          |");
             Console.WriteLine("+===============================================================+");
-            TestGeocoding("R. Lugar Novo 109, Constance");
-            TestGeocoding("R. Costa 176, Campo");
-            TestGeocoding("Trancoso, Guarda");
+            TestGeocoding(httpClient, "R. Lugar Novo 109, Constance");
+            TestGeocoding(httpClient, "R. Costa 176, Campo");
+            TestGeocoding(httpClient, "Trancoso, Guarda");
             Console.WriteLine("\n+===============================================================+");
             Console.WriteLine("| Geocoding Test Finished                                       |");
             Console.WriteLine("+===============================================================+");
-            Console.ReadKey(true);
-            TestForecast(1131500);
             Console.ReadKey(true);
             AsyncRequest();
             Console.ReadKey(true);

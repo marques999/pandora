@@ -55,16 +55,17 @@ namespace XameteoTest.IPMA
 
         /// <summary>
         /// </summary>
-        /// <param name="rhsLatitude"></param>
-        /// <param name="rhsLongitude"></param>
+        /// <param name="latitude"></param>
+        /// <param name="longitude"></param>
         /// <returns></returns>
-        public double CalculateDistance(double rhsLatitude, double rhsLongitude)
+        public double CalculateDistance(double latitude, double longitude)
         {
-            var deltaLatitude = DegreesToRadians(rhsLatitude - Latitude);
-            var deltaLongitude = DegreesToRadians(rhsLongitude - Longitude);
+            var deltaLatitude = DegreesToRadians(latitude - Latitude);
+            var deltaLongitude = DegreesToRadians(longitude - Longitude);
             var angle = Math.Sin(deltaLatitude / 2) * Math.Sin(deltaLatitude / 2) + Math.Sin(deltaLongitude / 2) *
                         Math.Sin(deltaLongitude / 2) * Math.Cos(DegreesToRadians(Latitude)) *
-                        Math.Cos(DegreesToRadians(rhsLatitude));
+                        Math.Cos(DegreesToRadians(latitude));
+
             return 12742 * Math.Atan2(Math.Sqrt(angle), Math.Sqrt(1 - angle));
         }
     }
