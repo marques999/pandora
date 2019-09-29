@@ -119,29 +119,29 @@ namespace MemcardRex
         /// </summary>
         public string ConvertShiftJisToAscii(byte[] buffer)
         {
-            var output = new StringBuilder();
+            var stringBuilder = new StringBuilder();
 
-            for (var bufferIndex = 0; bufferIndex < buffer.Length; bufferIndex += 2)
+            for (var position = 0; position < buffer.Length; position += 2)
             {
-                var key = (buffer[bufferIndex] << 8) | buffer[bufferIndex + 1];
+                var keyCode = (buffer[position] << 8) | buffer[position + 1];
 
-                switch (key)
+                switch (keyCode)
                 {
-                case 0:
+                case 0x0000:
 
-                    return output.ToString();
+                    return stringBuilder.ToString();
 
                 case 0x8140:
 
-                    output.Append("  ");
+                    stringBuilder.Append("  ");
 
                     break;
 
                 default:
 
-                    if (ShiftJisTable.TryGetValue(key, out var value))
+                    if (ShiftJisTable.TryGetValue(keyCode, out var value))
                     {
-                        output.Append(value);
+                        stringBuilder.Append(value);
                     }
 
                     break;
@@ -149,7 +149,7 @@ namespace MemcardRex
                 }
             }
 
-            return output.ToString();
+            return stringBuilder.ToString();
         }
     }
 }

@@ -4,7 +4,7 @@ namespace MemcardRex
 {
     /// <summary>
     /// </summary>
-    public static class CommonMessages
+    public static class Messages
     {
         /// <summary>
         /// </summary>

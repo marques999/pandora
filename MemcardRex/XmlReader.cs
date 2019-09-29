@@ -11,15 +11,15 @@ namespace MemcardRex
     {
         /// <summary>
         /// </summary>
-        private readonly List<string> _xmlElements = new List<string>();
-
-        /// <summary>
-        /// </summary>
         private readonly XmlTextReader _xmlReader;
 
         /// <summary>
         /// </summary>
         private readonly List<string> _xmlValues = new List<string>();
+
+        /// <summary>
+        /// </summary>
+        private readonly List<string> _xmlElements = new List<string>();
 
         /// <summary>
         /// </summary>
@@ -30,15 +30,14 @@ namespace MemcardRex
 
             while (_xmlReader.Read())
             {
-                var xmlNodeType = _xmlReader.NodeType;
-
-                if (xmlNodeType == XmlNodeType.Element)
+                switch (_xmlReader.NodeType)
                 {
+                case XmlNodeType.Element:
                     _xmlElements.Add(_xmlReader.Name);
-                }
-                else if (xmlNodeType == XmlNodeType.Text)
-                {
+                    break;
+                case XmlNodeType.Text:
                     _xmlValues.Add(_xmlReader.Value);
+                    break;
                 }
             }
         }
@@ -57,7 +56,12 @@ namespace MemcardRex
         /// <returns></returns>
         public string Read(string key)
         {
-            return _xmlElements.Contains(key) ? _xmlValues[_xmlElements.IndexOf(key) - 1] : null;
+            if (_xmlElements.Contains(key))
+            {
+                return _xmlValues[_xmlElements.IndexOf(key) - 1];
+            }
+     
+            return null;
         }
 
         /// <summary>
@@ -68,26 +72,26 @@ namespace MemcardRex
         /// <returns></returns>
         public int ReadInteger(string key, int minimum, int maximum)
         {
-            string result = null;
+            string xmlValue = null;
 
             if (_xmlElements.Contains(key))
             {
-                result = _xmlValues[_xmlElements.IndexOf(key) - 1];
+                xmlValue = _xmlValues[_xmlElements.IndexOf(key) - 1];
             }
 
-            if (int.TryParse(result, out var value) == false)
+            if (int.TryParse(xmlValue, out var value) == false)
             {
                 return value;
             }
 
             if (value < minimum)
             {
-                value = minimum;
+                return minimum;
             }
 
             if (value > maximum)
             {
-                value = maximum;
+                return maximum;
             }
 
             return value;

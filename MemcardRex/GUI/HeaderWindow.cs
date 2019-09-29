@@ -135,7 +135,7 @@ namespace MemcardRex.GUI
             {
                 if (productCodeTextbox.Text.Length < 10 && identifierTextbox.Text.Length != 0)
                 {
-                    CommonMessages.Warning(applicationName, "Product code must be exactly 10 characters long.");
+                    Messages.Warning(applicationName, "Product code must be exactly 10 characters long.");
                 }
                 else
                 {

@@ -194,7 +194,7 @@ namespace MemcardRex.GUI
                     continue;
                 }
 
-                CommonMessages.Warning(ApplicationName, string.Format(FileAlreadyOpened, Path.GetFileName(fileName)));
+                Messages.Warning(ApplicationName, string.Format(FileAlreadyOpened, Path.GetFileName(fileName)));
 
                 return;
             }
@@ -211,7 +211,7 @@ namespace MemcardRex.GUI
             else
             {
                 _pScard.RemoveAt(_pScard.Count - 1);
-                CommonMessages.Warning(ApplicationName, message);
+                Messages.Warning(ApplicationName, message);
             }
         }
 
@@ -284,7 +284,7 @@ namespace MemcardRex.GUI
             }
             else
             {
-                CommonMessages.Warning(ApplicationName, "Memory card could not be saved.");
+                Messages.Warning(ApplicationName, "Memory card could not be saved.");
             }
         }
 
@@ -452,11 +452,11 @@ namespace MemcardRex.GUI
             }
             else if (saveType == 1)
             {
-                CommonMessages.Warning(ApplicationName, SelectedSaveNotDeleted);
+                Messages.Warning(ApplicationName, SelectedSaveNotDeleted);
             }
             else
             {
-                CommonMessages.Warning(ApplicationName, SelectedSlotLinked);
+                Messages.Warning(ApplicationName, SelectedSlotLinked);
             }
         }
 
@@ -488,11 +488,11 @@ namespace MemcardRex.GUI
             }
             else if (saveType == 4)
             {
-                CommonMessages.Warning(ApplicationName, SelectedSaveAlreadyDeleted);
+                Messages.Warning(ApplicationName, SelectedSaveAlreadyDeleted);
             }
             else
             {
-                CommonMessages.Warning(ApplicationName, SelectedSlotLinked);
+                Messages.Warning(ApplicationName, SelectedSlotLinked);
             }
         }
 
@@ -518,9 +518,9 @@ namespace MemcardRex.GUI
 
             if (saveType == 2 || saveType == 3 || saveType == 5 || saveType == 6)
             {
-                CommonMessages.Warning(ApplicationName, SelectedSlotLinked);
+                Messages.Warning(ApplicationName, SelectedSlotLinked);
             }
-            else if (CommonMessages.Prompt(ApplicationName, "Formatted slots cannot be restored.\nDo you want to proceed with this operation?") == DialogResult.Yes)
+            else if (Messages.Prompt(ApplicationName, "Formatted slots cannot be restored.\nDo you want to proceed with this operation?") == DialogResult.Yes)
             {
                 _pScard[listIndex].FormatSave(slotIndex);
                 RefreshListView(listIndex, slotIndex);
@@ -559,7 +559,7 @@ namespace MemcardRex.GUI
             }
             else
             {
-                CommonMessages.Warning(ApplicationName, SelectedSlotLinked);
+                Messages.Warning(ApplicationName, SelectedSlotLinked);
             }
         }
 
@@ -583,7 +583,7 @@ namespace MemcardRex.GUI
 
             if (_tempBuffer == null)
             {
-                CommonMessages.Warning(ApplicationName, TemporaryBufferIsEmpty);
+                Messages.Warning(ApplicationName, TemporaryBufferIsEmpty);
             }
             else if (_pScard[listIndex].SaveType[slotNumber] == 0)
             {
@@ -593,12 +593,12 @@ namespace MemcardRex.GUI
                 }
                 else
                 {
-                    CommonMessages.Warning(ApplicationName, string.Format(FreeSlotsRequired, slotsRequired));
+                    Messages.Warning(ApplicationName, string.Format(FreeSlotsRequired, slotsRequired));
                 }
             }
             else
             {
-                CommonMessages.Warning(ApplicationName, SelectedSlotNotEmpty);
+                Messages.Warning(ApplicationName, SelectedSlotNotEmpty);
             }
         }
 
@@ -664,11 +664,11 @@ namespace MemcardRex.GUI
             }
             else if (saveType == 4)
             {
-                CommonMessages.Warning(ApplicationName, "Deleted saves cannot be exported. Restore a save to proceed.");
+                Messages.Warning(ApplicationName, "Deleted saves cannot be exported. Restore a save to proceed.");
             }
             else
             {
-                CommonMessages.Warning(ApplicationName, SelectedSlotLinked);
+                Messages.Warning(ApplicationName, SelectedSlotLinked);
             }
         }
 
@@ -702,16 +702,16 @@ namespace MemcardRex.GUI
                     }
                     else if (requiredSlots > 0)
                     {
-                        CommonMessages.Warning(ApplicationName, $"To complete this operation {requiredSlots} free slots are required.");
+                        Messages.Warning(ApplicationName, $"To complete this operation {requiredSlots} free slots are required.");
                     }
                     else
                     {
-                        CommonMessages.Warning(ApplicationName, "File could not be opened.");
+                        Messages.Warning(ApplicationName, "File could not be opened.");
                     }
                 }
                 else
                 {
-                    CommonMessages.Warning(ApplicationName, SelectedSlotNotEmpty);
+                    Messages.Warning(ApplicationName, SelectedSlotNotEmpty);
                 }
             }
         }
@@ -728,7 +728,7 @@ namespace MemcardRex.GUI
 
         private void SavePrompt(int listIndex)
         {
-            if (_pScard[listIndex].WasChanged && CommonMessages.Prompt(ApplicationName, "Do you want to save changes to <" + _pScard[listIndex].CardName + ">?") == DialogResult.Yes)
+            if (_pScard[listIndex].WasChanged && Messages.Prompt(ApplicationName, "Do you want to save changes to <" + _pScard[listIndex].CardName + ">?") == DialogResult.Yes)
             {
                 SaveCardFunction(listIndex);
             }
@@ -773,7 +773,7 @@ namespace MemcardRex.GUI
             }
             else
             {
-                CommonMessages.Warning(ApplicationName, SelectedSlotLinked);
+                Messages.Warning(ApplicationName, SelectedSlotLinked);
             }
         }
 
@@ -1095,7 +1095,7 @@ namespace MemcardRex.GUI
                 return;
             }
 
-            if (_settings.WarningMessage == 1 && CommonMessages.Prompt(ApplicationName, "Save editing may potentialy corrupt the save.\nDo you want to proceed with this operation?") == DialogResult.No)
+            if (_settings.WarningMessage == 1 && Messages.Prompt(ApplicationName, "Save editing may potentialy corrupt the save.\nDo you want to proceed with this operation?") == DialogResult.No)
             {
                 return;
             }
@@ -1274,7 +1274,7 @@ namespace MemcardRex.GUI
         {
             if (_tempBuffer == null)
             {
-                CommonMessages.Warning(ApplicationName, TemporaryBufferIsEmpty);
+                Messages.Warning(ApplicationName, TemporaryBufferIsEmpty);
                 return;
             }
 
@@ -1297,7 +1297,7 @@ namespace MemcardRex.GUI
 
                 if (fetchedData.Length != _tempBuffer.Length)
                 {
-                    CommonMessages.Warning(ApplicationName, "Save file size mismatch. Saves can't be compared.");
+                    Messages.Warning(ApplicationName, "Save file size mismatch. Saves can't be compared.");
                     return;
                 }
 
@@ -1305,7 +1305,7 @@ namespace MemcardRex.GUI
             }
             else
             {
-                CommonMessages.Warning(ApplicationName, SelectedSlotLinked);
+                Messages.Warning(ApplicationName, SelectedSlotLinked);
             }
         }
 
@@ -1650,7 +1650,7 @@ namespace MemcardRex.GUI
 
         private void FormatHardwareCard(int hardDevice)
         {
-            var dialogResult = CommonMessages.Prompt(ApplicationName, "Formatting will delete all saves on the Memory Card.\nDo you want to proceed with this operation?");
+            var dialogResult = Messages.Prompt(ApplicationName, "Formatting will delete all saves on the Memory Card.\nDo you want to proceed with this operation?");
 
             if (dialogResult == DialogResult.No)
             {

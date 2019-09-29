@@ -152,7 +152,7 @@ namespace MemcardRex.GUI
             }
             catch (Exception exception)
             {
-                CommonMessages.Warning(applicationName, exception.Message);
+                Messages.Warning(applicationName, exception.Message);
             }
 
             return null;
@@ -183,7 +183,7 @@ namespace MemcardRex.GUI
             }
             catch (Exception exception)
             {
-                CommonMessages.Warning(applicationName, exception.Message);
+                Messages.Warning(applicationName, exception.Message);
             }
 
             return null;
@@ -214,7 +214,7 @@ namespace MemcardRex.GUI
             }
             catch (Exception exception)
             {
-                CommonMessages.Warning(applicationName, exception.Message);
+                Messages.Warning(applicationName, exception.Message);
             }
 
             return null;
@@ -242,7 +242,7 @@ namespace MemcardRex.GUI
             }
             catch (Exception exception)
             {
-                CommonMessages.Warning(applicationName, exception.Message);
+                Messages.Warning(applicationName, exception.Message);
             }
             finally
             {
@@ -272,7 +272,7 @@ namespace MemcardRex.GUI
             }
             catch (Exception exception)
             {
-                CommonMessages.Warning(applicationName, exception.Message);
+                Messages.Warning(applicationName, exception.Message);
             }
             finally
             {
@@ -302,7 +302,7 @@ namespace MemcardRex.GUI
             }
             catch (Exception exception)
             {
-                CommonMessages.Warning(applicationName, exception.Message);
+                Messages.Warning(applicationName, exception.Message);
             }
             finally
             {

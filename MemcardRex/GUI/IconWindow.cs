@@ -513,14 +513,14 @@ namespace MemcardRex.GUI
             }
             catch (Exception exception)
             {
-                CommonMessages.Warning("Error", exception.Message);
+                Messages.Warning("Error", exception.Message);
                 openedBitmap?.Dispose();
                 return;
             }
 
             if (openedBitmap.Width != 16 || openedBitmap.Height != 16)
             {
-                CommonMessages.Warning("Warning", "Selected image is not a 16x16 pixel image.");
+                Messages.Warning("Warning", "Selected image is not a 16x16 pixel image.");
                 openedBitmap.Dispose();
                 return;
             }
@@ -532,7 +532,7 @@ namespace MemcardRex.GUI
 
             if (foundColors.Count > 16)
             {
-                CommonMessages.Warning("Warning", "Selected image contains more then 16 colors.");
+                Messages.Warning("Warning", "Selected image contains more then 16 colors.");
                 openedBitmap.Dispose();
                 return;
             }
