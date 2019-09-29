@@ -15,30 +15,67 @@ namespace AdpcmDecoder
         /// <summary>
         /// </summary>
         private const string ApplicationTitle = "AdpcmDecoder";
-
-        /// <summary>
-        /// </summary>
-        private readonly Button _buttonDecode;
-
         /// <summary>
         /// </summary>
         private readonly AdpcmDecoder _decoder = new AdpcmDecoder();
 
         /// <summary>
         /// </summary>
-        private readonly Label _labelFilename;
+        private readonly Button _buttonDecode = new Button
+        {
+            Enabled = false,
+            Location = new Point(308, 82),
+            Size = new Size(123, 33),
+            TabIndex = 20,
+            Text = "Decode",
+            UseVisualStyleBackColor = true
+        };
 
         /// <summary>
         /// </summary>
-        private readonly Label _labelLength;
+        private readonly Label _labelFilename = new Label
+        {
+            AutoSize = true,
+            Location = new Point(154, 12),
+            Size = new Size(26, 13),
+            TabIndex = 2,
+            Text = "File:"
+        };
 
         /// <summary>
         /// </summary>
-        private readonly RadioButton _radioAdpcmA;
+        private readonly Label _labelLength = new Label
+        {
+            AutoSize = true,
+            Location = new Point(154, 25),
+            Size = new Size(30, 13),
+            TabIndex = 3,
+            Text = "Length:"
+        };
 
         /// <summary>
         /// </summary>
-        private readonly TextBox _textFrequency;
+        private readonly RadioButton _radioAdpcmA = new RadioButton
+        {
+            AutoSize = true,
+            Checked = true,
+            Location = new Point(6, 19),
+            Size = new Size(128, 17),
+            TabIndex = 8,
+            TabStop = true,
+            Text = "ADPCM-A (18500 Hz)",
+            UseVisualStyleBackColor = true
+        };
+
+        /// <summary>
+        /// </summary>
+        private readonly TextBox _textFrequency = new TextBox
+        {
+            Enabled = false,
+            Location = new Point(85, 41),
+            Size = new Size(69, 20),
+            TabIndex = 10
+        };
 
         /// <summary>
         /// </summary>
@@ -56,7 +93,6 @@ namespace AdpcmDecoder
             var buttonBrowse = new Button
             {
                 Location = new Point(12, 12),
-                Name = "buttonBrowse",
                 Size = new Size(136, 26),
                 TabIndex = 0,
                 Text = "Browse...",
@@ -67,70 +103,15 @@ namespace AdpcmDecoder
             {
                 AutoSize = true,
                 Location = new Point(160, 44),
-                Name = "labelFrequency",
                 Size = new Size(20, 13),
                 TabIndex = 11,
                 Text = "Hz"
-            };
-
-            _buttonDecode = new Button
-            {
-                Enabled = false,
-                Location = new Point(308, 82),
-                Name = "buttonDecode",
-                Size = new Size(123, 33),
-                TabIndex = 20,
-                Text = "Decode",
-                UseVisualStyleBackColor = true
-            };
-
-            _labelFilename = new Label
-            {
-                AutoSize = true,
-                Location = new Point(154, 12),
-                Name = "labelFilename",
-                Size = new Size(26, 13),
-                TabIndex = 2,
-                Text = "File:"
-            };
-
-            _labelLength = new Label
-            {
-                AutoSize = true,
-                Location = new Point(154, 25),
-                Name = "labelLength",
-                Size = new Size(30, 13),
-                TabIndex = 3,
-                Text = "Length:"
-            };
-
-            _textFrequency = new TextBox
-            {
-                Enabled = false,
-                Location = new Point(85, 41),
-                Name = "textFrequency",
-                Size = new Size(69, 20),
-                TabIndex = 10
-            };
-
-            _radioAdpcmA = new RadioButton
-            {
-                AutoSize = true,
-                Checked = true,
-                Location = new Point(6, 19),
-                Name = "radioAdpcmA",
-                Size = new Size(128, 17),
-                TabIndex = 8,
-                TabStop = true,
-                Text = "ADPCM-A (18500 Hz)",
-                UseVisualStyleBackColor = true
             };
 
             var radioAdpcmB = new RadioButton
             {
                 AutoSize = true,
                 Location = new Point(6, 42),
-                Name = "radioAdpcmB",
                 Size = new Size(79, 17),
                 TabIndex = 9,
                 Text = "ADPCM-B",
@@ -140,7 +121,6 @@ namespace AdpcmDecoder
             var groupFormat = new GroupBox
             {
                 Location = new Point(12, 44),
-                Name = "groupFormat",
                 Size = new Size(198, 71),
                 TabIndex = 7,
                 TabStop = false,
@@ -180,12 +160,12 @@ namespace AdpcmDecoder
         /// <param name="arguments"></param>
         private void ButtonOpenFile_Click(object sender, EventArgs arguments)
         {
-            var openFile = new OpenFileDialog();
+            using var openFileDialog = new OpenFileDialog();
 
             try
             {
-                openFile.ShowDialog();
-                _fileName = openFile.FileName;
+                openFileDialog.ShowDialog();
+                _fileName = openFileDialog.FileName;
                 _adpcmData = File.ReadAllBytes(_fileName);
                 _buttonDecode.Enabled = true;
                 _labelFilename.Text = string.Concat("File: ", _fileName);
@@ -253,8 +233,8 @@ namespace AdpcmDecoder
             }
             else
             {
-                var adpcmFrequency = int.Parse(_textFrequency.Text);
-                var buffer = _decoder.ConvertAdpcmB(_adpcmData, adpcmFrequency);
+                var frequency = int.Parse(_textFrequency.Text);
+                var buffer = _decoder.ConvertAdpcmB(_adpcmData, frequency);
 
                 if (buffer == null)
                 {
@@ -264,7 +244,7 @@ namespace AdpcmDecoder
                 }
                 else
                 {
-                    DisplayFinished(ToWav(buffer, adpcmFrequency, 0));
+                    DisplayFinished(ToWav(buffer, frequency, 0));
                 }
             }
         }
