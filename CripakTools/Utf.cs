@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace CriPakTools
@@ -74,7 +73,7 @@ namespace CriPakTools
             RowLength = reader.ReadInt16();
             RowCount = reader.ReadInt32();
 
-            for (var columnIndex = 0; columnIndex < ColumnCount; columnIndex++)
+            for (var position = 0; position < ColumnCount; position++)
             {
                 var column = new Column
                 {
@@ -116,35 +115,35 @@ namespace CriPakTools
                         continue;
                     }
 
-                    row.Type = Columns[columnIndex].Flags & (int)ColumnFlags.TypeMask;
                     row.Position = reader.BaseStream.Position;
+                    row.Type = Columns[columnIndex].Flags & (int)ColumnFlags.TypeMask;
 
                     switch (row.Type)
                     {
-                    case 0: case 1:
+                    case 0x00: case 0x01:
                         row.Uint8 = reader.ReadByte();
                         break;
-                    case 2: case 3:
+                    case 0x02: case 0x03:
                         row.Uint16 = reader.ReadUInt16();
                         break;
-                    case 4: case 5:
+                    case 0x04: case 0x05:
                         row.Uint32 = reader.ReadUInt32();
                         break;
-                    case 6: case 7:
+                    case 0x06: case 0x07:
                         row.Uint64 = reader.ReadUInt64();
                         break;
-                    case 8:
+                    case 0x08:
                         row.Ufloat = reader.ReadSingle();
                         break;
-                    case 10:
+                    case 0x0A:
                         row.Str = Tools.ReadCString(reader, -1, reader.ReadInt32() + StringsOffset);
                         break;
-                    case 11:
+                    case 0x0B:
                         row.Position = reader.ReadInt32() + DataOffset;
                         row.Data = Tools.GetData(reader, row.Position, reader.ReadInt32());
                         break;
                     default:
-                        throw new NotImplementedException();
+                        continue;
                     }
 
                     entries.Add(row);

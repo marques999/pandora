@@ -18,7 +18,7 @@ namespace CriPakTools
         {
             var current = 0;
             var maximum = maximumLength == -1 ? 255 : maximumLength;
-            var initialPosition = reader.BaseStream.Position;
+            var start = reader.BaseStream.Position;
 
             if (offset > -1)
             {
@@ -44,7 +44,7 @@ namespace CriPakTools
 
             string result;
 
-            reader.BaseStream.Seek(offset > -1 ? offset : initialPosition, SeekOrigin.Begin);
+            reader.BaseStream.Seek(offset > -1 ? offset : start, SeekOrigin.Begin);
 
             if (encoding == null)
             {
@@ -57,11 +57,11 @@ namespace CriPakTools
 
             if (offset > -1)
             {
-                reader.BaseStream.Seek(initialPosition, SeekOrigin.Begin);
+                reader.BaseStream.Seek(start, SeekOrigin.Begin);
             }
             else
             {
-                reader.BaseStream.Seek(initialPosition + maximum, SeekOrigin.Begin);
+                reader.BaseStream.Seek(start + maximum, SeekOrigin.Begin);
             }
 
             return result;

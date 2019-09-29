@@ -432,17 +432,16 @@ namespace CriPakTools
             etocEntry.Encrypted = IsUtfEncrypted;
             etocEntry.FileSize = EtocPacket.Length;
 
-            using (var stream = new MemoryStream(UtfPacket))
-            using (var endianReader = new EndianReader(stream, false))
+            using var stream = new MemoryStream(UtfPacket);
+            using var endianReader = new EndianReader(stream, false);
+            
+            _files = new Utf();
+
+            if (_files.ReadUtf(endianReader) == false)
             {
-                _files = new Utf();
-
-                if (_files.ReadUtf(endianReader) == false)
-                {
-                    return false;
-                }
+                return false;
             }
-
+ 
             var fileEntries = FileTable.Where(fileEntry => fileEntry.FileType == "FILE").ToList();
 
             for (var entryIndex = 0; entryIndex < fileEntries.Count; entryIndex++)
@@ -606,16 +605,16 @@ namespace CriPakTools
 
                 switch (type)
                 {
-                case 0:
-                    return (byte)0xFF;
-                case 1:
-                    return (ushort)0xFFFF;
-                case 2:
-                    return 0xFFFFFFFF;
-                case 3:
-                    return 0xFFFFFFFFFFFFFFFF;
-                default:
-                    return 0;
+                    case 0:
+                        return (byte)0xFF;
+                    case 1:
+                        return (ushort)0xFFFF;
+                    case 2:
+                        return 0xFFFFFFFF;
+                    case 3:
+                        return 0xFFFFFFFFFFFFFFFF;
+                    default:
+                        return 0;
                 }
 
             case ulong valueUlong:

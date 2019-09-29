@@ -49,19 +49,19 @@ namespace CriPakTools
         {
             switch (Type)
             {
-            case 0: case 1:
+            case 0x00: case 0x01:
                 return Uint8;
-            case 2: case 3:
+            case 0x02: case 0x03:
                 return Uint16;
-            case 4: case 5:
+            case 0x04: case 0x05:
                 return Uint32;
-            case 6: case 7:
+            case 0x06: case 0x07:
                 return Uint64;
-            case 8:
+            case 0x08:
                 return Ufloat;
-            case 10:
+            case 0x0A:
                 return Str;
-            case 11:
+            case 0x0B:
                 return Data;
             default:
                 return null;
@@ -75,19 +75,19 @@ namespace CriPakTools
         {
             switch (Type)
             {
-            case 0: case 1:
+            case 0x00: case 0x01:
                 return Uint8.GetType();
-            case 2: case 3:
+            case 0x02: case 0x03:
                 return Uint16.GetType();
-            case 4: case 5:
+            case 0x04: case 0x05:
                 return Uint32.GetType();
-            case 6: case 7:
+            case 0x06: case 0x07:
                 return Uint64.GetType();
-            case 8:
+            case 0x08:
                 return Ufloat.GetType();
-            case 10:
+            case 0x0A:
                 return Str.GetType();
-            case 11:
+            case 0x0B:
                 return Data.GetType();
             default:
                 return null;

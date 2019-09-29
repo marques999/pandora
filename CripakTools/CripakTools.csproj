@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <NoWin32Manifest>true</NoWin32Manifest>
+	<NoWin32Manifest>true</NoWin32Manifest>
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 </Project>

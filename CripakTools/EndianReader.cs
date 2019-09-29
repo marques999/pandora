@@ -39,9 +39,9 @@ namespace CriPakTools
                 return base.ReadDouble();
             }
 
-            FillMyBuffer(8);
+            FillMyBuffer(0x08);
 
-            return BitConverter.ToDouble(_buffer.Take(8).Reverse().ToArray(), 0);
+            return BitConverter.ToDouble(_buffer.Take(0x08).Reverse().ToArray(), 0x00);
         }
 
         /// <inheritdoc />
@@ -55,9 +55,9 @@ namespace CriPakTools
                 return base.ReadInt16();
             }
 
-            FillMyBuffer(2);
+            FillMyBuffer(0x02);
 
-            return BitConverter.ToInt16(_buffer.Take(2).Reverse().ToArray(), 0);
+            return BitConverter.ToInt16(_buffer.Take(0x02).Reverse().ToArray(), 0x00);
         }
 
         /// <inheritdoc />
@@ -71,9 +71,9 @@ namespace CriPakTools
                 return base.ReadInt32();
             }
 
-            FillMyBuffer(4);
+            FillMyBuffer(0x04);
 
-            return BitConverter.ToInt32(_buffer.Take(4).Reverse().ToArray(), 0);
+            return BitConverter.ToInt32(_buffer.Take(0x04).Reverse().ToArray(), 0x00);
         }
 
         /// <inheritdoc />
@@ -87,9 +87,9 @@ namespace CriPakTools
                 return base.ReadInt64();
             }
 
-            FillMyBuffer(8);
+            FillMyBuffer(0x08);
 
-            return BitConverter.ToInt64(_buffer.Take(8).Reverse().ToArray(), 0);
+            return BitConverter.ToInt64(_buffer.Take(0x08).Reverse().ToArray(), 0x00);
         }
 
         /// <inheritdoc />
@@ -103,9 +103,9 @@ namespace CriPakTools
                 return base.ReadSingle();
             }
 
-            FillMyBuffer(4);
+            FillMyBuffer(0x04);
 
-            return BitConverter.ToSingle(_buffer.Take(4).Reverse().ToArray(), 0);
+            return BitConverter.ToSingle(_buffer.Take(0x04).Reverse().ToArray(), 0x00);
         }
 
         /// <inheritdoc />
@@ -119,9 +119,9 @@ namespace CriPakTools
                 return base.ReadUInt16();
             }
 
-            FillMyBuffer(2);
+            FillMyBuffer(0x02);
 
-            return BitConverter.ToUInt16(_buffer.Take(2).Reverse().ToArray(), 0);
+            return BitConverter.ToUInt16(_buffer.Take(0x02).Reverse().ToArray(), 0x00);
         }
 
         /// <inheritdoc />
@@ -135,9 +135,9 @@ namespace CriPakTools
                 return base.ReadUInt32();
             }
 
-            FillMyBuffer(4);
+            FillMyBuffer(0x04);
 
-            return BitConverter.ToUInt32(_buffer.Take(4).Reverse().ToArray(), 0);
+            return BitConverter.ToUInt32(_buffer.Take(0x04).Reverse().ToArray(), 0x00);
         }
 
         /// <inheritdoc />
@@ -151,9 +151,9 @@ namespace CriPakTools
                 return base.ReadUInt64();
             }
 
-            FillMyBuffer(8);
+            FillMyBuffer(0x08);
 
-            return BitConverter.ToUInt64(_buffer.Take(8).Reverse().ToArray(), 0);
+            return BitConverter.ToUInt64(_buffer.Take(0x08).Reverse().ToArray(), 0x00);
         }
 
         /// <summary>
@@ -161,14 +161,14 @@ namespace CriPakTools
         /// <param name="byteCount"></param>
         private void FillMyBuffer(int byteCount)
         {
+            var offset = 0;
+
             if (byteCount == 1)
             {
                 _buffer[0] = (byte)BaseStream.ReadByte();
             }
             else
             {
-                var offset = 0;
-
                 do
                 {
                     offset += BaseStream.Read(_buffer, offset, byteCount - offset);
